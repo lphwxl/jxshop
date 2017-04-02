@@ -1,0 +1,10 @@
+<script type="text/javascript" src="./public/ueditor/ueditor.config.js"></script>
+//引入ueditor.config.js
+                
+<script type="text/javascript" src="ueditor.all.js"></script>    //引入ueditor.all.js
+                
+<script type="text/javascript">
+var ue = UE.getEditor('container');//实例化ueditor对象，传入textarea的id  </script>
+                <script id="container" name="content" type="text/plain">
+                    这里写你的初始化内容fgfgfffffffff
+                </script>

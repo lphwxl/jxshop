@@ -1,0 +1,109 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>购物车页面</title>
+    <link rel="stylesheet" href="{:C('CSS')}/base.css" type="text/css">
+    <link rel="stylesheet" href="{:C('CSS')}/global.css" type="text/css">
+    <link rel="stylesheet" href="{:C('CSS')}/header.css" type="text/css">
+    <link rel="stylesheet" href="{:C('CSS')}/cart.css" type="text/css">
+    <link rel="stylesheet" href="{:C('CSS')}/footer.css" type="text/css">
+
+    <script type="text/javascript" src="{:C('JS')}/jquery-1.8.3.min.js"></script>
+   <!--  <script type="text/javascript" src="{:C('JS')}/cart1.js"></script> -->
+    
+</head>
+<body>
+    <!-- 顶部导航 start -->
+    <include file="public/header"/>
+    <!-- 顶部导航 end -->
+    <div style="clear:both;"></div>
+    <include file="public/flow"/>
+    <div style="clear:both;"></div>
+
+    <!-- 主体部分 start -->
+    <div class="mycart w990 mt10 bc">
+        <h2><span>我的购物车</span></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="col1">商品名称</th>
+                    <th class="col2">商品信息</th>
+                    <th class="col3">单价</th>
+                    <th class="col4">数量</th>    
+                    <th class="col5">小计</th>
+                    <th class="col6">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            <volist name="goods" id="vo">
+                <tr>
+                    <td class="col1"><a href=""><img src="{$vo['goods_small_logo']}" alt="" /></a>  <strong><a href="">{$vo['goods_name']}</a></strong></td>
+                    <td class="col2"> <p>颜色：073深红</p> <p>尺码：170/92A/S</p> </td>
+                    <td class="col3">￥<span>{$vo['goods_price']}</span></td>
+                    <td class="col4"> 
+                        <a href="javascript:;" class="reduce_num" onclick="changenum({$vo['goods_id']},'red')"></a>
+                        <input onkeyup="changenum({$vo['goods_id']})" type="text" name="amount" value="{$vo['goods_buy_number']}" class="amount" id="amount_{$vo['goods_id']}"/>
+                        <a href="javascript:;" class="add_num" onclick="changenum({$vo['goods_id']},'add')"></a>
+                    </td>
+                    <td class="col5">￥<span id="small_{$vo['goods_id']}">{$vo['goods_total_price']}</span></td>
+                    <td class="col6"><a href="{:U('shop/del','goods_id='.$vo['goods_id'])}">删除</a></td>
+                </tr>
+             </volist>
+                
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">购物金额总计： <strong>￥ <span id="total">{$price['price']}</span></strong></td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="cart_btn w990 bc mt10">
+            <a href="{:U('goods/showlist')}" class="continue">继续购物</a>
+            <a href="{:U('flow2')}" class="checkout">结 算</a>
+        </div>
+    </div>
+    <!-- 主体部分 end -->
+
+    <div style="clear:both;"></div>
+    <!-- 底部版权 start -->
+    <include file="public/footer2"/>
+    <!-- 底部版权 end -->
+    
+    <script type="text/javascript">
+		function changenum(goods_id,mark){
+			var mark = mark || '';
+			var num = $('#amount_'+goods_id).val();
+			if( mark == 'red'){
+				num--;
+				if(num < 1){
+					window.location.href = window.location.href;
+					return ;
+				}
+			}else if(mark=='add'){
+				num++;
+			}else if(mark == ''){
+				var reg = /^([1-9]|1\d{1}|20)$/;
+				if(!num.match(reg)){
+					alert('超出购买数量');
+					window.location.href=window.location.href;
+					return;
+				}
+			}
+			$.ajax({
+				url:"{:U('changenum')}",
+				data:{'goods_id':goods_id,'num':num},
+				type:'post',
+				success:function(msg){
+					var msg = eval('('+msg+')');
+					$('#total').text(msg.price);
+					$('#small_'+msg.goods_id).text(msg.goods_total_price);
+					$('#amount_'+msg.goods_id).val(msg.goods_buy_number);
+				}
+			});
+		}
+	
+	</script>
+</body>
+</html>
